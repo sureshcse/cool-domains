@@ -1,18 +1,22 @@
 const main = async () => {
-    // The first return is the deployer, the second is a random account
-    //const [owner, randomPerson] = await hre.ethers.getSigners();
     const domainContractFactory = await hre.ethers.getContractFactory('Domains');
     const domainContract = await domainContractFactory.deploy("ninja");
     await domainContract.deployed();
+
     console.log("Contract deployed to:", domainContract.address);
-    //console.log("Contract deployed by:", owner.address);
-    let txn = await domainContract.register("mortal",{value: hre.ethers.utils.parseEther('0.1')});
+
+    // CHANGE THIS DOMAIN TO SOMETHING ELSE! I don't want to see OpenSea full of bananas lol
+    let txn = await domainContract.register("banana",  {value: hre.ethers.utils.parseEther('0.1')});
     await txn.wait();
-    const domainAddress = await domainContract.getAddress("mortal");
-    console.log("Owner of domain mortal:", domainAddress);
-    // Trying to set a record that doesn't belong to me!
-    //txn = await domainContract.connect(owner).setRecord("doom", "Haha my domain now!");
-    //await txn.wait();
+    console.log("Minted domain banana.ninja");
+
+    txn = await domainContract.setRecord("banana", "Am I a banana or a ninja??");
+    await txn.wait();
+    console.log("Set record for banana.ninja");
+
+    const address = await domainContract.getAddress("banana");
+    console.log("Owner of domain banana:", address);
+
     const balance = await hre.ethers.provider.getBalance(domainContract.address);
     console.log("Contract balance:", hre.ethers.utils.formatEther(balance));
   }
@@ -26,5 +30,5 @@ const main = async () => {
       process.exit(1);
     }
   };
-
+  
   runMain();
